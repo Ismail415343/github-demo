@@ -127,7 +127,7 @@ let topperAvg = findAvg(topper.marks);
     for(let i=0; i<students.length;i++){
      let avg = findAvg(students[i].marks);
       if(avg>topperAvg){
-            topper = students[i] 
+            topper = students[i]
         }
     }
     return topper;
