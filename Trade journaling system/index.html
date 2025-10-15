@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trading Journal Analyzer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f6fa;
+      margin: 0;
+      padding: 20px;
+      color: #2f3640;
+    }
+
+    h1 {
+      text-align: center;
+      color: #273c75;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    label {
+      display: block;
+      margin: 8px 0 4px;
+    }
+
+    input[type="date"],
+    input[type="number"],
+    input[type="text"],
+    input[type="checkbox"] {
+      padding: 8px;
+      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-sizing: border-box;
+    }
+
+    button {
+      background: #273c75;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background: #40739e;
+    }
+
+    .report {
+      background: #dcdde1;
+      border-radius: 10px;
+      padding: 15px;
+      margin-top: 20px;
+      font-size: 15px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    th, td {
+      padding: 8px;
+      text-align: center;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .center {
+      text-align: center;
+    }
+
+    .note {
+      font-size: 13px;
+      color: #555;
+      text-align: center;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Trading Journal Analyzer</h1>
+  <div class="container">
+    <label for="date">Date:</label>
+    <input type="date" id="date">
+
+    <label for="amount">Profit / Loss ($):</label>
+    <input type="number" id="amount" placeholder="e.g. 5.27 or -2.36">
+
+    <label for="note">Note:</label>
+    <input type="text" id="note" placeholder="TSLA 5-min breakout...">
+
+    <label>
+      <input type="checkbox" id="noTrade"> No Trade Day
+    </label>
+
+    <button onclick="addTrade()">Add Entry</button>
+    <button onclick="generateReport()">Generate Report</button>
+    <button onclick="clearJournal()">Clear Journal</button>
+
+    <div id="report" class="report" style="display:none;"></div>
+
+    <table id="table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Profit/Loss ($)</th>
+          <th>Note</th>
+          <th>No Trade</th>
+        </tr>
+      </thead>
+      <tbody id="journalBody"></tbody>
+    </table>
+
+    <p class="note">All data is saved automatically in your browser (localStorage).</p>
+  </div>
+    <script src="index.js"></script>
+</body>
+</html>
