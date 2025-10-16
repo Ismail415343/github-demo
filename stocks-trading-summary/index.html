@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Trading Journal Analyzer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f6fa;
+      padding: 20px;
+    }
+    h1 { color: #273c75; }
+    input, select {
+      padding: 8px;
+      margin: 5px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      padding: 8px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      background: #273c75;
+      color: white;
+      margin: 3px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background: #718093;
+      color: white;
+    }
+    #report {
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 15px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.2);
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📊 Trading Journal Analyzer</h1>
+
+  <div>
+    <input type="text" id="date" placeholder="Enter Date (e.g. 1/Oct/2025)">
+    <input type="text" id="stock" placeholder="Stock Name (e.g. TSLA)">
+    <select id="strategyType">
+      <option value="">Select High/Low</option>
+      <option value="High Break">High Break</option>
+      <option value="Low Break">Low Break</option>
+    </select>
+    <input type="number" id="amount" placeholder="Profit/Loss ($)">
+    <input type="text" id="note" placeholder="Note">
+    <label><input type="checkbox" id="noTrade"> No Trade</label>
+    <br>
+    <button onclick="addTrade()">Add</button>
+    <button onclick="generateReport()">Generate Report</button>
+    <button style="background:#e84118;" onclick="clearJournal()">Clear All</button>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Stock</th>
+        <th>Strategy</th>
+        <th>Profit/Loss</th>
+        <th>Note</th>
+        <th>No Trade</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="journalBody"></tbody>
+  </table>
+
+  <div id="report" style="display:none;"></div>
+
+
+
+    <script src="index.js"></script>
+</body>
+</html>
