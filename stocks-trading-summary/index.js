@@ -1,11 +1,14 @@
- const dateInput = document.getElementById('date');
+const dateInput = document.getElementById('date');
     const stockInput = document.getElementById('stock');
-    const strategyType = document.getElementById('strategyType');
+    const strategyInput = document.getElementById('strategy');
+    const levelInput = document.getElementById('level');
     const amountInput = document.getElementById('amount');
     const noteInput = document.getElementById('note');
+    const winInput = document.getElementById('win');
+    const lossInput = document.getElementById('loss');
     const noTradeInput = document.getElementById('noTrade');
-    const reportDiv = document.getElementById('report');
     const journalBody = document.getElementById('journalBody');
+    const reportDiv = document.getElementById('report');
 
     let journal = JSON.parse(localStorage.getItem('tradingJournal')) || [];
 
@@ -19,12 +22,15 @@
         const row = document.createElement('tr');
         row.innerHTML = `
           <td>${entry.date}</td>
-          <td>${entry.stock || '-'}</td>
-          <td>${entry.strategy || '-'}</td>
+          <td>${entry.stock}</td>
+          <td>${entry.strategy}</td>
+          <td>${entry.level}</td>
           <td>${entry.noTrade ? '-' : entry.amount}</td>
           <td>${entry.note}</td>
+          <td>${entry.win ? '✅' : ''}</td>
+          <td>${entry.loss ? '❌' : ''}</td>
           <td>${entry.noTrade ? '✅' : ''}</td>
-          <td><button style="background:#e84118;" onclick="deleteEntry(${index})">Delete</button></td>
+          <td><button onclick="deleteEntry(${index})" style="background:#e84118;">Delete</button></td>
         `;
         journalBody.appendChild(row);
       });
@@ -33,9 +39,12 @@
     function addTrade() {
       const date = dateInput.value.trim();
       const stock = stockInput.value.trim();
-      const strategy = strategyType.value;
+      const strategy = strategyInput.value;
+      const level = levelInput.value;
       const amount = parseFloat(amountInput.value);
       const note = noteInput.value.trim();
+      const win = winInput.checked;
+      const loss = lossInput.checked;
       const noTrade = noTradeInput.checked;
 
       if (!date) {
@@ -43,13 +52,8 @@
         return;
       }
 
-      if (!noTrade && (!stock || !strategy)) {
-        alert("Please fill in Stock Name and Strategy Type (High/Low).");
-        return;
-      }
-
-      if (!noTrade && isNaN(amount)) {
-        alert("Please enter a valid Profit/Loss amount or select No Trade.");
+      if (!noTrade && (isNaN(amount) || !stock || !strategy || !level)) {
+        alert("Please complete all trade details before saving.");
         return;
       }
 
@@ -57,21 +61,29 @@
         date,
         stock: noTrade ? '-' : stock,
         strategy: noTrade ? '-' : strategy,
+        level: noTrade ? '-' : level,
         amount: noTrade ? 0 : amount,
         note: noTrade ? 'No Trade' : note,
+        win: noTrade ? false : win,
+        loss: noTrade ? false : loss,
         noTrade
       };
 
       journal.push(entry);
       saveJournal();
       renderJournal();
+      clearInputs();
+    }
 
-      // Clear fields
+    function clearInputs() {
       dateInput.value = '';
       stockInput.value = '';
-      strategyType.value = '';
+      strategyInput.value = '';
+      levelInput.value = '';
       amountInput.value = '';
       noteInput.value = '';
+      winInput.checked = false;
+      lossInput.checked = false;
       noTradeInput.checked = false;
     }
 
@@ -84,51 +96,30 @@
     }
 
     function generateReport() {
-      if (journal.length === 0) {
-        alert("No data to analyze.");
-        return;
-      }
-
       const trades = journal.filter(t => !t.noTrade);
-      const wins = trades.filter(t => t.amount > 0);
-      const losses = trades.filter(t => t.amount < 0);
+      const wins = trades.filter(t => t.win);
+      const losses = trades.filter(t => t.loss);
 
-      const totalWin = wins.reduce((a,b)=>a+b.amount,0);
-      const totalLoss = losses.reduce((a,b)=>a+b.amount,0);
-      const avgWin = wins.length ? totalWin / wins.length : 0;
-      const avgLoss = losses.length ? totalLoss / losses.length : 0;
-      const winRate = trades.length ? (wins.length / trades.length * 100) : 0;
-      const totalProfit = trades.reduce((a,b)=>a+b.amount,0);
+      const totalProfit = trades.reduce((a, b) => a + b.amount, 0);
+      const avgWin = wins.length ? (wins.reduce((a,b)=>a+b.amount,0) / wins.length) : 0;
+      const avgLoss = losses.length ? (losses.reduce((a,b)=>a+b.amount,0) / losses.length) : 0;
+      const winRate = (wins.length / trades.length) * 100;
 
-      let startBal = parseFloat(prompt("Enter your starting balance ($):", "44.00"));
-      if (isNaN(startBal) || startBal <= 0) startBal = 1;
-      const growth = ((startBal + totalProfit) - startBal) / startBal * 100;
-
-      // Strategy breakdown
-      const highTrades = trades.filter(t => t.strategy === 'High Break');
-      const lowTrades = trades.filter(t => t.strategy === 'Low Break');
-
-      const highWins = highTrades.filter(t => t.amount > 0).length;
-      const lowWins = lowTrades.filter(t => t.amount > 0).length;
-
-      const highWinRate = highTrades.length ? (highWins / highTrades.length * 100) : 0;
-      const lowWinRate = lowTrades.length ? (lowWins / lowTrades.length * 100) : 0;
+      let startingBalance = parseFloat(prompt("Enter your starting balance ($):", "44.00"));
+      if (isNaN(startingBalance) || startingBalance <= 0) startingBalance = 1;
+      const finalBalance = startingBalance + totalProfit;
 
       reportDiv.style.display = 'block';
       reportDiv.innerHTML = `
-        <h3>📈 Monthly Summary</h3>
-        <p><b>Total Trades:</b> ${trades.length}</p>
-        <p><b>Winning Trades:</b> ${wins.length}</p>
-        <p><b>Losing Trades:</b> ${losses.length}</p>
-        <p><b>Win Rate:</b> ${winRate.toFixed(2)}%</p>
-        <p><b>Average Win:</b> $${avgWin.toFixed(2)}</p>
-        <p><b>Average Loss:</b> $${avgLoss.toFixed(2)}</p>
-        <p><b>Net Profit:</b> $${totalProfit.toFixed(2)}</p>
-        <p><b>Growth:</b> ${growth.toFixed(2)}%</p>
-        <hr>
-        <h4>⚔ Win Rate by Strategy</h4>
-        <p>High Break Win Rate: ${highWinRate.toFixed(2)}%</p>
-        <p>Low Break Win Rate: ${lowWinRate.toFixed(2)}%</p>
+        <h3>📊 Monthly Summary</h3>
+        <p>Total Trades: ${trades.length}</p>
+        <p>Winning Trades: ${wins.length}</p>
+        <p>Losing Trades: ${losses.length}</p>
+        <p>Win Rate: ${winRate.toFixed(2)}%</p>
+        <p>Average Win: $${avgWin.toFixed(2)}</p>
+        <p>Average Loss: $${avgLoss.toFixed(2)}</p>
+        <p>Net Profit: $${totalProfit.toFixed(2)}</p>
+        <p><b>Final Balance: $${finalBalance.toFixed(2)}</b></p>
       `;
     }
 
@@ -140,5 +131,18 @@
         reportDiv.style.display = 'none';
       }
     }
+
+    // Exclusive win/loss check
+    winInput.addEventListener('change', () => {
+      if (winInput.checked) lossInput.checked = false;
+    });
+    lossInput.addEventListener('change', () => {
+      if (lossInput.checked) winInput.checked = false;
+    });
+
+    // Auto-save when No Trade checked
+    noTradeInput.addEventListener('change', () => {
+      if (noTradeInput.checked) addTrade();
+    });
 
     renderJournal();

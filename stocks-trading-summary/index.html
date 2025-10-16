@@ -7,23 +7,11 @@
     body {
       font-family: Arial, sans-serif;
       background: #f5f6fa;
+      color: #2f3640;
       padding: 20px;
     }
-    h1 { color: #273c75; }
-    input, select {
-      padding: 8px;
-      margin: 5px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-    button {
-      padding: 8px 15px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      background: #273c75;
-      color: white;
-      margin: 3px;
+    h2 {
+      text-align: center;
     }
     table {
       width: 100%;
@@ -31,42 +19,69 @@
       margin-top: 15px;
     }
     th, td {
-      border: 1px solid #ddd;
+      border: 1px solid #dcdde1;
       padding: 8px;
       text-align: center;
     }
     th {
-      background: #718093;
+      background: #273c75;
       color: white;
     }
+    input, select, button {
+      padding: 6px;
+      margin: 4px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background: #44bd32;
+      color: white;
+      cursor: pointer;
+      border: none;
+    }
+    button:hover {
+      opacity: 0.9;
+    }
     #report {
-      background: white;
-      padding: 15px;
+      margin-top: 20px;
+      background: #dcdde1;
+      padding: 10px;
       border-radius: 10px;
-      margin-top: 15px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.2);
+      display: none;
     }
   </style>
 </head>
 <body>
 
-  <h1>📊 Trading Journal Analyzer</h1>
+  <h2>📘 Trading Journal Analyzer</h2>
 
   <div>
-    <input type="text" id="date" placeholder="Enter Date (e.g. 1/Oct/2025)">
+    <input type="text" id="date" placeholder="Enter Date (e.g. 16/Oct/2025)">
     <input type="text" id="stock" placeholder="Stock Name (e.g. TSLA)">
-    <select id="strategyType">
-      <option value="">Select High/Low</option>
+    
+    <select id="strategy">
+      <option value="">Select Strategy</option>
+      <option value="Previous Day BR">Previous Day BR</option>
+      <option value="5-Minute BR">5-Minute BR</option>
+      <option value="Pre Market BR">Pre Market BR</option>
+    </select>
+    
+    <select id="level">
+      <option value="">Select Level</option>
       <option value="High Break">High Break</option>
       <option value="Low Break">Low Break</option>
     </select>
+
     <input type="number" id="amount" placeholder="Profit/Loss ($)">
-    <input type="text" id="note" placeholder="Note">
+    <input type="text" id="note" placeholder="Add Note">
+    
+    <label><input type="checkbox" id="win"> Win</label>
+    <label><input type="checkbox" id="loss"> Loss</label>
     <label><input type="checkbox" id="noTrade"> No Trade</label>
-    <br>
+    
     <button onclick="addTrade()">Add</button>
     <button onclick="generateReport()">Generate Report</button>
-    <button style="background:#e84118;" onclick="clearJournal()">Clear All</button>
+    <button onclick="clearJournal()" style="background:#e84118;">Clear All</button>
   </div>
 
   <table>
@@ -75,8 +90,11 @@
         <th>Date</th>
         <th>Stock</th>
         <th>Strategy</th>
-        <th>Profit/Loss</th>
+        <th>Level</th>
+        <th>Amount ($)</th>
         <th>Note</th>
+        <th>Win</th>
+        <th>Loss</th>
         <th>No Trade</th>
         <th>Action</th>
       </tr>
@@ -84,9 +102,7 @@
     <tbody id="journalBody"></tbody>
   </table>
 
-  <div id="report" style="display:none;"></div>
-
-
+  <div id="report"></div>
 
     <script src="index.js"></script>
 </body>
